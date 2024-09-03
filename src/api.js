@@ -26,3 +26,7 @@ export const filterByIngredient = (ingredient) => {
 export const getIngredientsList = () => {
     return axios.get(`${BASE_URL}list.php?i=list`);
 };
+
+export const lookupMealById = (id) => {
+    return axios.get(`${BASE_URL}/lookup.php?i=${id}`);
+};
