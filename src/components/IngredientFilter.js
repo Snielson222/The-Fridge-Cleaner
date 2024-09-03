@@ -8,7 +8,6 @@ const IngredientFilter = ({ onFilter }) => {
     const [selectedIngredients, setSelectedIngredients] = useState([]);
 
     useEffect(() => {
-        // Fetch the list of ingredients when the component mounts
         getIngredientsList()
             .then(response => {
                 const ingredientList = response.data.meals.slice(0, 50); // Limit to 50 common ingredients
@@ -18,12 +17,14 @@ const IngredientFilter = ({ onFilter }) => {
     }, []);
 
     const handleIngredientClick = (ingredient) => {
-        // Check if ingredient is already selected
+        let updatedIngredients;
         if (!selectedIngredients.includes(ingredient)) {
-            const updatedIngredients = [...selectedIngredients, ingredient];
-            setSelectedIngredients(updatedIngredients);
-            onFilter(updatedIngredients);
+            updatedIngredients = [...selectedIngredients, ingredient];
+        } else {
+            updatedIngredients = selectedIngredients.filter(item => item !== ingredient);
         }
+        setSelectedIngredients(updatedIngredients);
+        onFilter(updatedIngredients);
     };
 
     const clearFilters = () => {
@@ -41,6 +42,12 @@ const IngredientFilter = ({ onFilter }) => {
                         onClick={() => handleIngredientClick(ingredient.strIngredient)}
                         style={{
                             backgroundColor: selectedIngredients.includes(ingredient.strIngredient) ? '#f0c040' : '#e0e0e0',
+                            color: selectedIngredients.includes(ingredient.strIngredient) ? '#fff' : '#000',
+                            margin: '5px',
+                            padding: '10px 15px',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
                         }}
                     >
                         {ingredient.strIngredient}
@@ -48,7 +55,7 @@ const IngredientFilter = ({ onFilter }) => {
                 ))}
             </div>
             {selectedIngredients.length > 0 && (
-                <button onClick={clearFilters} style={{ marginTop: '10px', backgroundColor: '#ff4040', color: '#fff' }}>
+                <button onClick={clearFilters} style={{ marginTop: '10px', backgroundColor: '#ff4040', color: '#fff', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>
                     Clear Filters
                 </button>
             )}

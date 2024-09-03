@@ -1,5 +1,3 @@
-// App.js
-
 import React, { useState, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import RecipeList from './components/RecipeList';
@@ -9,8 +7,17 @@ import { searchMealByName, filterByIngredient } from './api';
 const App = () => {
     const [recipes, setRecipes] = useState([]);
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const savedIngredients = JSON.parse(localStorage.getItem('selectedIngredients')) || [];
+        if (savedIngredients.length > 0) {
+            handleFilter(savedIngredients);
+        }
+    }, []);
 
     const handleSearch = (query) => {
+        setLoading(true);
         searchMealByName(query)
             .then(response => {
                 setRecipes(response.data.meals || []);
@@ -19,11 +26,14 @@ const App = () => {
             .catch(error => {
                 console.error("Error fetching recipes:", error);
                 setMessage('Error fetching recipes.');
-            });
+            })
+            .finally(() => setLoading(false));
     };
 
     const handleFilter = (selectedIngredients) => {
+        localStorage.setItem('selectedIngredients', JSON.stringify(selectedIngredients)); // Save to localStorage
         if (selectedIngredients.length > 0) {
+            setLoading(true);
             const ingredientPromises = selectedIngredients.map(ingredient => filterByIngredient(ingredient));
 
             Promise.all(ingredientPromises)
@@ -43,7 +53,8 @@ const App = () => {
                 .catch(error => {
                     console.error("Error filtering recipes:", error);
                     setMessage('Error filtering recipes.');
-                });
+                })
+                .finally(() => setLoading(false));
         } else {
             setRecipes([]);
             setMessage('Please select ingredients to filter recipes.');
@@ -55,6 +66,7 @@ const App = () => {
             <h1>Recipe Finder</h1>
             <SearchBar onSearch={handleSearch} />
             <IngredientFilter onFilter={handleFilter} />
+            {loading && <p>Loading...</p>}
             {message && <p>{message}</p>}
             <RecipeList recipes={recipes} />
         </div>
@@ -62,4 +74,3 @@ const App = () => {
 };
 
 export default App;
-
