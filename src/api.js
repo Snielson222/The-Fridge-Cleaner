@@ -23,4 +23,6 @@ export const filterByIngredient = (ingredient) => {
     return axios.get(`${BASE_URL}filter.php?i=${ingredient}`);
 };
 
-// Add more API methods as needed
+export const getIngredientsList = () => {
+    return axios.get(`${BASE_URL}list.php?i=list`);
+};
