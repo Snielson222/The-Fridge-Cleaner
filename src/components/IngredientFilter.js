@@ -1,7 +1,7 @@
-// Create a new file IngredientFilter.js
+// IngredientFilter.js
 
 import React, { useState, useEffect } from 'react';
-import { getIngredientsList, filterByIngredient } from '../api';
+import { getIngredientsList } from '../api';
 
 const IngredientFilter = ({ onFilter }) => {
     const [ingredients, setIngredients] = useState([]);
@@ -11,8 +11,7 @@ const IngredientFilter = ({ onFilter }) => {
         // Fetch the list of ingredients when the component mounts
         getIngredientsList()
             .then(response => {
-                // Limit to 50 common ingredients
-                const ingredientList = response.data.meals.slice(0, 50);
+                const ingredientList = response.data.meals.slice(0, 50); // Limit to 50 common ingredients
                 setIngredients(ingredientList);
             })
             .catch(error => console.error("Error fetching ingredients:", error));
@@ -23,10 +22,13 @@ const IngredientFilter = ({ onFilter }) => {
         if (!selectedIngredients.includes(ingredient)) {
             const updatedIngredients = [...selectedIngredients, ingredient];
             setSelectedIngredients(updatedIngredients);
-
-            // Call the onFilter callback with updated ingredients list
             onFilter(updatedIngredients);
         }
+    };
+
+    const clearFilters = () => {
+        setSelectedIngredients([]);
+        onFilter([]); // Passing an empty array to indicate no filtering
     };
 
     return (
@@ -34,14 +36,22 @@ const IngredientFilter = ({ onFilter }) => {
             <h2>Filter by Ingredients</h2>
             <div>
                 {ingredients.map(ingredient => (
-                    <button 
-                        key={ingredient.strIngredient} 
+                    <button
+                        key={ingredient.strIngredient}
                         onClick={() => handleIngredientClick(ingredient.strIngredient)}
+                        style={{
+                            backgroundColor: selectedIngredients.includes(ingredient.strIngredient) ? '#f0c040' : '#e0e0e0',
+                        }}
                     >
                         {ingredient.strIngredient}
                     </button>
                 ))}
             </div>
+            {selectedIngredients.length > 0 && (
+                <button onClick={clearFilters} style={{ marginTop: '10px', backgroundColor: '#ff4040', color: '#fff' }}>
+                    Clear Filters
+                </button>
+            )}
         </div>
     );
 };
