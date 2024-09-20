@@ -6,12 +6,16 @@ import { listAllIngredients } from '../api';
 const IngredientFilter = ({ onFilter }) => {
     const [ingredients, setIngredients] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        // Fetch all available ingredients
+        // Fetch all available ingredients and sort them alphabetically
         listAllIngredients()
             .then(response => {
-                setIngredients(response.data.meals || []);
+                const sortedIngredients = response.data.meals.sort((a, b) =>
+                    a.strIngredient.localeCompare(b.strIngredient)
+                );
+                setIngredients(sortedIngredients);
             })
             .catch(error => {
                 console.error('Error fetching ingredients:', error);
@@ -28,27 +32,56 @@ const IngredientFilter = ({ onFilter }) => {
         onFilter(updatedSelection);
     };
 
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    // Filter ingredients based on the search term
+    const filteredIngredients = ingredients.filter(ingredient =>
+        ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div style={styles.container}>
-            {ingredients.map((ingredient) => (
-                <button
-                    key={ingredient.strIngredient}
-                    style={selectedIngredients.includes(ingredient.strIngredient) ? styles.selectedButton : styles.button}
-                    onClick={() => handleSelectIngredient(ingredient.strIngredient)}
-                >
-                    {ingredient.strIngredient}
-                </button>
-            ))}
+            <input 
+                type="text" 
+                placeholder="Search ingredients..." 
+                value={searchTerm} 
+                onChange={handleSearch} 
+                style={styles.searchBar}
+            />
+            <div style={styles.ingredientList}>
+                {filteredIngredients.map((ingredient) => (
+                    <button
+                        key={ingredient.strIngredient}
+                        style={selectedIngredients.includes(ingredient.strIngredient) ? styles.selectedButton : styles.button}
+                        onClick={() => handleSelectIngredient(ingredient.strIngredient)}
+                    >
+                        {ingredient.strIngredient}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
 
 const styles = {
     container: {
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+    },
+    searchBar: {
+        padding: '10px',
+        width: '100%',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+    },
+    ingredientList: {
         display: 'flex',
         flexWrap: 'wrap',
         gap: '10px',
-        padding: '20px',
     },
     button: {
         padding: '8px 12px',
