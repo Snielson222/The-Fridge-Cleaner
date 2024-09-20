@@ -65,6 +65,8 @@ const IngredientFilter = ({ onFilter }) => {
     );
 };
 
+
+
 const styles = {
     container: {
         padding: '20px',
