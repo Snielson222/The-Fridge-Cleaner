@@ -4,13 +4,31 @@ import React from 'react';
 
 const RecipeList = ({ recipes }) => {
     return (
-        <div style={styles.container}>
+        <div style={styles.recipeListContainer}>
             {recipes.map((recipe) => (
                 <div key={recipe.idMeal} style={styles.card}>
-                    <img src={`${recipe.strMealThumb}/preview`} alt={recipe.strMeal} style={styles.image} />
-                    <h3 style={styles.title}>{recipe.strMeal}</h3>
+                    <img src={recipe.strMealThumb} alt={recipe.strMeal} style={styles.thumbnail} />
+                    <h3>{recipe.strMeal}</h3>
+                    
+                    {/* Scrollable Ingredients Container */}
+                    <div style={styles.ingredientsContainer}>
+                        <h4>Ingredients:</h4>
+                        <div style={styles.ingredientsList}>
+                            {Array.from({ length: 20 }, (_, i) => i + 1)
+                                .map(index => recipe[`strIngredient${index}`] && recipe[`strIngredient${index}`].trim())
+                                .filter(Boolean)
+                                .map((ingredient, i) => (
+                                    <p key={i} style={styles.ingredientItem}>
+                                        {ingredient} - {recipe[`strMeasure${i + 1}`]}
+                                    </p>
+                                ))}
+                        </div>
+                    </div>
+
+                    {/* Instructions Container */}
                     <div style={styles.instructionsContainer}>
-                        <p style={styles.instructions}>{recipe.strInstructions}</p>
+                        <h4>Instructions:</h4>
+                        <p>{recipe.strInstructions}</p>
                     </div>
                 </div>
             ))}
@@ -19,45 +37,51 @@ const RecipeList = ({ recipes }) => {
 };
 
 const styles = {
-    container: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+    recipeListContainer: {
+        display: 'flex',
+        flexDirection: 'column',
         gap: '20px',
-        padding: '20px',
     },
     card: {
         border: '1px solid #ddd',
         borderRadius: '8px',
-        padding: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        padding: '20px',
         backgroundColor: '#fff',
-        maxHeight: '400px', // Limits the overall card height
-        overflow: 'hidden',
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
         display: 'flex',
         flexDirection: 'column',
+        maxWidth: '400px',
     },
-    image: {
+    thumbnail: {
         width: '100%',
-        borderRadius: '5px',
+        height: 'auto',
+        borderRadius: '8px',
         marginBottom: '10px',
     },
-    title: {
-        fontSize: '18px',
+    ingredientsContainer: {
+        maxHeight: '150px', // Set max height for the scrollable container
+        overflowY: 'scroll',
         marginBottom: '10px',
-        color: '#333',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        padding: '10px',
+        backgroundColor: '#f9f9f9',
+    },
+    ingredientsList: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '5px',
+    },
+    ingredientItem: {
+        margin: '0',
+        fontSize: '14px',
     },
     instructionsContainer: {
-        overflowY: 'auto',
-        flexGrow: 1,
-        padding: '5px',
-    },
-    instructions: {
-        fontSize: '14px',
-        color: '#555',
-        lineHeight: '1.5',
-        maxHeight: '150px', // Controls the maximum height of instructions area
-        overflowY: 'auto', // Allows scrolling if content exceeds maxHeight
-        margin: 0,
+        padding: '10px',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        backgroundColor: '#f1f1f1',
+        marginTop: '10px',
     },
 };
 
