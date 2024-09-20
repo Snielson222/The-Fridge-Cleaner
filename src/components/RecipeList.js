@@ -25,10 +25,12 @@ const RecipeList = ({ recipes }) => {
                         </div>
                     </div>
 
-                    {/* Instructions Container */}
+                    {/* Scrollable Instructions Container */}
                     <div style={styles.instructionsContainer}>
                         <h4>Instructions:</h4>
-                        <p>{recipe.strInstructions}</p>
+                        <div style={styles.instructionsContent}>
+                            <p>{recipe.strInstructions}</p>
+                        </div>
                     </div>
                 </div>
             ))}
@@ -59,7 +61,7 @@ const styles = {
         marginBottom: '10px',
     },
     ingredientsContainer: {
-        maxHeight: '150px', // Set max height for the scrollable container
+        maxHeight: '150px', // Set max height for the scrollable ingredients container
         overflowY: 'scroll',
         marginBottom: '10px',
         border: '1px solid #ddd',
@@ -77,11 +79,16 @@ const styles = {
         fontSize: '14px',
     },
     instructionsContainer: {
+        maxHeight: '200px', // Set max height for the scrollable instructions container
+        overflowY: 'scroll',
         padding: '10px',
         border: '1px solid #ddd',
         borderRadius: '8px',
         backgroundColor: '#f1f1f1',
-        marginTop: '10px',
+    },
+    instructionsContent: {
+        fontSize: '14px',
+        lineHeight: '1.6',
     },
 };
 
