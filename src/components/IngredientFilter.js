@@ -1,66 +1,70 @@
 // IngredientFilter.js
 
 import React, { useState, useEffect } from 'react';
-import { getIngredientsList } from '../api';
+import { listAllIngredients } from '../api';
 
 const IngredientFilter = ({ onFilter }) => {
     const [ingredients, setIngredients] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
 
     useEffect(() => {
-        getIngredientsList()
+        // Fetch all available ingredients
+        listAllIngredients()
             .then(response => {
-                const ingredientList = response.data.meals.slice(0, 50); // Limit to 50 common ingredients
-                setIngredients(ingredientList);
+                setIngredients(response.data.meals || []);
             })
-            .catch(error => console.error("Error fetching ingredients:", error));
+            .catch(error => {
+                console.error('Error fetching ingredients:', error);
+            });
     }, []);
 
-    const handleIngredientClick = (ingredient) => {
-        let updatedIngredients;
-        if (!selectedIngredients.includes(ingredient)) {
-            updatedIngredients = [...selectedIngredients, ingredient];
-        } else {
-            updatedIngredients = selectedIngredients.filter(item => item !== ingredient);
-        }
-        setSelectedIngredients(updatedIngredients);
-        onFilter(updatedIngredients);
-    };
+    const handleSelectIngredient = (ingredient) => {
+        // Toggle ingredient selection
+        const updatedSelection = selectedIngredients.includes(ingredient)
+            ? selectedIngredients.filter(i => i !== ingredient)
+            : [...selectedIngredients, ingredient];
 
-    const clearFilters = () => {
-        setSelectedIngredients([]);
-        onFilter([]); // Passing an empty array to indicate no filtering
+        setSelectedIngredients(updatedSelection);
+        onFilter(updatedSelection);
     };
 
     return (
-        <div>
-            <h2>Filter by Ingredients</h2>
-            <div>
-                {ingredients.map(ingredient => (
-                    <button
-                        key={ingredient.strIngredient}
-                        onClick={() => handleIngredientClick(ingredient.strIngredient)}
-                        style={{
-                            backgroundColor: selectedIngredients.includes(ingredient.strIngredient) ? '#f0c040' : '#e0e0e0',
-                            color: selectedIngredients.includes(ingredient.strIngredient) ? '#fff' : '#000',
-                            margin: '5px',
-                            padding: '10px 15px',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {ingredient.strIngredient}
-                    </button>
-                ))}
-            </div>
-            {selectedIngredients.length > 0 && (
-                <button onClick={clearFilters} style={{ marginTop: '10px', backgroundColor: '#ff4040', color: '#fff', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>
-                    Clear Filters
+        <div style={styles.container}>
+            {ingredients.map((ingredient) => (
+                <button
+                    key={ingredient.strIngredient}
+                    style={selectedIngredients.includes(ingredient.strIngredient) ? styles.selectedButton : styles.button}
+                    onClick={() => handleSelectIngredient(ingredient.strIngredient)}
+                >
+                    {ingredient.strIngredient}
                 </button>
-            )}
+            ))}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '10px',
+        padding: '20px',
+    },
+    button: {
+        padding: '8px 12px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+        backgroundColor: '#f9f9f9',
+        cursor: 'pointer',
+    },
+    selectedButton: {
+        padding: '8px 12px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+        backgroundColor: '#ff6347', // Highlight selected ingredients
+        color: '#fff',
+        cursor: 'pointer',
+    },
 };
 
 export default IngredientFilter;

@@ -30,3 +30,7 @@ export const getIngredientsList = () => {
 export const lookupMealById = (id) => {
     return axios.get(`${BASE_URL}/lookup.php?i=${id}`);
 };
+
+export const listAllIngredients = () => {
+    return axios.get(`${BASE_URL}/list.php?i=list`);
+};

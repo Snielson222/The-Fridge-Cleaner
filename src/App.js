@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+// App.js
+
+import React, { useState } from 'react';
 import SearchBar from './components/SearchBar';
 import RecipeList from './components/RecipeList';
 import IngredientFilter from './components/IngredientFilter';
@@ -9,35 +11,32 @@ const App = () => {
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const savedIngredients = JSON.parse(localStorage.getItem('selectedIngredients')) || [];
-        if (savedIngredients.length > 0) {
-            handleFilter(savedIngredients);
+    // Function to handle meal search by name
+    const handleSearch = (searchQuery) => {
+        if (searchQuery) {
+            setLoading(true);
+            searchMealByName(searchQuery)
+                .then(response => {
+                    const meals = response.data.meals || [];
+                    if (meals.length > 0) {
+                        fetchFullDetails(meals);
+                    } else {
+                        setRecipes([]);
+                        setMessage('No recipes found for the searched term.');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error searching meals:", error);
+                    setMessage('Error searching meals.');
+                })
+                .finally(() => setLoading(false));
+        } else {
+            setRecipes([]);
+            setMessage('Please enter a search term.');
         }
-    }, []);
-
-    const handleSearch = (query) => {
-        setLoading(true);
-        searchMealByName(query)
-            .then(response => {
-                const meals = response.data.meals || [];
-                if (meals.length === 0) {
-                    setRecipes([]);
-                    setMessage('No recipes found.');
-                    setLoading(false);
-                } else {
-                    fetchFullDetails(meals);
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching recipes:", error);
-                setMessage('Error fetching recipes.');
-                setLoading(false);
-            });
     };
 
     const handleFilter = (selectedIngredients) => {
-        localStorage.setItem('selectedIngredients', JSON.stringify(selectedIngredients));
         if (selectedIngredients.length > 0) {
             setLoading(true);
             const ingredientPromises = selectedIngredients.map(ingredient => filterByIngredient(ingredient));
@@ -56,7 +55,6 @@ const App = () => {
                     if (filteredMeals.length === 0) {
                         setRecipes([]);
                         setMessage('No recipes found with selected ingredients.');
-                        setLoading(false);
                     } else {
                         fetchFullDetails(filteredMeals);
                     }
@@ -64,8 +62,8 @@ const App = () => {
                 .catch(error => {
                     console.error("Error filtering recipes:", error);
                     setMessage('Error filtering recipes.');
-                    setLoading(false);
-                });
+                })
+                .finally(() => setLoading(false));
         } else {
             setRecipes([]);
             setMessage('Please select ingredients to filter recipes.');
@@ -84,8 +82,7 @@ const App = () => {
             .catch(error => {
                 console.error("Error fetching meal details:", error);
                 setMessage('Error fetching meal details.');
-            })
-            .finally(() => setLoading(false));
+            });
     };
 
     return (
