@@ -40,9 +40,10 @@ const RecipeList = ({ recipes }) => {
 
 const styles = {
     recipeListContainer: {
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)', // 3 columns on larger screens
         gap: '20px',
+        padding: '20px',
     },
     card: {
         border: '1px solid #ddd',
@@ -52,7 +53,7 @@ const styles = {
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
         display: 'flex',
         flexDirection: 'column',
-        maxWidth: '400px',
+        maxWidth: '100%',
     },
     thumbnail: {
         width: '100%',
@@ -61,7 +62,7 @@ const styles = {
         marginBottom: '10px',
     },
     ingredientsContainer: {
-        maxHeight: '150px', // Set max height for the scrollable ingredients container
+        maxHeight: '150px',
         overflowY: 'scroll',
         marginBottom: '10px',
         border: '1px solid #ddd',
@@ -79,7 +80,7 @@ const styles = {
         fontSize: '14px',
     },
     instructionsContainer: {
-        maxHeight: '200px', // Set max height for the scrollable instructions container
+        maxHeight: '200px',
         overflowY: 'scroll',
         padding: '10px',
         border: '1px solid #ddd',
@@ -91,5 +92,14 @@ const styles = {
         lineHeight: '1.6',
     },
 };
+
+// Media query for responsive layout
+const responsiveStyles = `
+  @media (max-width: 768px) {
+    .recipeListContainer {
+      grid-template-columns: 1fr; // 1 column on mobile
+    }
+  }
+`;
 
 export default RecipeList;
