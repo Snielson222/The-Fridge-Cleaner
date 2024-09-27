@@ -1,7 +1,8 @@
-// IngredientFilter.js
+
 
 import React, { useState, useEffect } from 'react';
 import { listAllIngredients } from '../api';
+import '../App.css'
 
 const IngredientFilter = ({ onFilter }) => {
     const [ingredients, setIngredients] = useState([]);
@@ -73,24 +74,23 @@ const styles = {
     },
     buttonsContainer: {
         display: 'flex',
-        flexWrap: 'wrap', // Allows the buttons to wrap to the next line
-        gap: '6px', // Smaller spacing between buttons
-        justifyContent: 'center', // Centers the buttons in the container
+        flexWrap: 'wrap',
+        gap: '10px', // Add space between the buttons
+        justifyContent: 'center',
         marginTop: '10px',
     },
     ingredientButton: {
-        width: '80px', // Smaller button width
-        height: '30px', // Smaller button height
-        padding: '4px', // Reduces padding for a more compact button
-        fontSize: '12px', // Adjusted font size for readability while reducing space
-        backgroundColor: '#e0e0e0', // Light background to ensure good contrast
-        border: '1px solid #bbb', // Simple border to define the buttons
-        borderRadius: '6px', // Rounded corners for a clean look
-        cursor: 'pointer', // Pointer cursor to indicate clickability
-        textAlign: 'center', // Center text inside the button
-        overflow: 'hidden', // Prevents text overflow
-        whiteSpace: 'nowrap', // Prevents the text from wrapping onto a new line
-        textOverflow: 'ellipsis', // Adds "..." if the text is too long
+        backgroundColor: '#4CAF50', // Pleasing green color
+        color: 'white', // Text color
+        border: 'none', // Remove the border
+        borderRadius: '6px', // Rounded corners
+        padding: '8px 12px', // Adjust padding for better button size
+        fontSize: '14px', // Slightly larger font size for readability
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease', // Add transition for hover effect
+    },
+    ingredientButtonHover: {
+        backgroundColor: '#45a049', // Darker green for hover effect
     },
 };
 

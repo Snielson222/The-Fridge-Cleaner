@@ -56,6 +56,10 @@ h1 {
 button {
   cursor: pointer;
   transition: background-color 0.3s ease;
+  background-color: lightgreen;
+  color: black;
+  padding: 1px;
+  border-radius: 5px;
 }
 
 button:hover {
