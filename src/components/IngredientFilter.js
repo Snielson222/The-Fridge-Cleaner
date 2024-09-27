@@ -43,7 +43,7 @@ const IngredientFilter = ({ onFilter }) => {
     );
 
     return (
-        <div style={styles.container}>
+        <div className='mainApp'>
             <input 
                 type="text" 
                 placeholder="Search ingredients..." 

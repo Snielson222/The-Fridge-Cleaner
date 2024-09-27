@@ -89,7 +89,7 @@ const App = () => {
     };
 
     return (
-        <div>
+        <div className='mainApp'>
             <h1>Recipe Finder</h1>
             <SearchBar onSearch={handleSearch} />
             <IngredientFilter onFilter={handleFilter} />
