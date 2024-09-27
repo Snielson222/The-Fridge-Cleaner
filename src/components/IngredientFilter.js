@@ -1,63 +1,35 @@
 // IngredientFilter.js
 
 import React, { useState, useEffect } from 'react';
-import { listAllIngredients } from '../api';
 
-const IngredientFilter = ({ onFilter }) => {
+const IngredientFilter = ({ handleFilter }) => {
     const [ingredients, setIngredients] = useState([]);
-    const [selectedIngredients, setSelectedIngredients] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
 
+    // Fetch ingredients from the API
     useEffect(() => {
-        // Fetch all available ingredients and sort them alphabetically
-        listAllIngredients()
-            .then(response => {
-                const sortedIngredients = response.data.meals.sort((a, b) =>
-                    a.strIngredient.localeCompare(b.strIngredient)
-                );
+        fetch('https://www.themealdb.com/api/json/v1/1/list.php?i=list')
+            .then(response => response.json())
+            .then(data => {
+                const sortedIngredients = data.meals
+                    .map((meal) => meal.strIngredient)
+                    .filter(Boolean)
+                    .sort(); // Sort alphabetically
                 setIngredients(sortedIngredients);
             })
-            .catch(error => {
-                console.error('Error fetching ingredients:', error);
-            });
+            .catch(error => console.error('Error fetching ingredients:', error));
     }, []);
-
-    const handleSelectIngredient = (ingredient) => {
-        // Toggle ingredient selection
-        const updatedSelection = selectedIngredients.includes(ingredient)
-            ? selectedIngredients.filter(i => i !== ingredient)
-            : [...selectedIngredients, ingredient];
-
-        setSelectedIngredients(updatedSelection);
-        onFilter(updatedSelection);
-    };
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    // Filter ingredients based on the search term
-    const filteredIngredients = ingredients.filter(ingredient =>
-        ingredient.strIngredient.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     return (
         <div style={styles.container}>
-            <input 
-                type="text" 
-                placeholder="Search ingredients..." 
-                value={searchTerm} 
-                onChange={handleSearch} 
-                style={styles.searchBar}
-            />
-            <div style={styles.ingredientList}>
-                {filteredIngredients.map((ingredient) => (
+            <h3>Select Ingredients:</h3>
+            <div style={styles.buttonsContainer}>
+                {ingredients.map((ingredient, index) => (
                     <button
-                        key={ingredient.strIngredient}
-                        style={selectedIngredients.includes(ingredient.strIngredient) ? styles.selectedButton : styles.button}
-                        onClick={() => handleSelectIngredient(ingredient.strIngredient)}
+                        key={index}
+                        style={styles.ingredientButton}
+                        onClick={() => handleFilter(ingredient)}
                     >
-                        {ingredient.strIngredient}
+                        {ingredient}
                     </button>
                 ))}
             </div>
@@ -65,40 +37,30 @@ const IngredientFilter = ({ onFilter }) => {
     );
 };
 
-
-
 const styles = {
     container: {
-        padding: '20px',
+        marginBottom: '20px',
+    },
+    buttonsContainer: {
         display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
+        flexWrap: 'wrap', // Allows the buttons to wrap to the next line
+        gap: '6px', // Smaller spacing between buttons
+        justifyContent: 'center', // Centers the buttons in the container
+        marginTop: '10px',
     },
-    searchBar: {
-        padding: '10px',
-        width: '100%',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-    },
-    ingredientList: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '10px',
-    },
-    button: {
-        padding: '8px 12px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        backgroundColor: '#f9f9f9',
-        cursor: 'pointer',
-    },
-    selectedButton: {
-        padding: '8px 12px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        backgroundColor: '#ff6347', // Highlight selected ingredients
-        color: '#fff',
-        cursor: 'pointer',
+    ingredientButton: {
+        width: '80px', // Smaller button width
+        height: '30px', // Smaller button height
+        padding: '4px', // Reduces padding for a more compact button
+        fontSize: '12px', // Adjusted font size for readability while reducing space
+        backgroundColor: '#e0e0e0', // Light background to ensure good contrast
+        border: '1px solid #bbb', // Simple border to define the buttons
+        borderRadius: '6px', // Rounded corners for a clean look
+        cursor: 'pointer', // Pointer cursor to indicate clickability
+        textAlign: 'center', // Center text inside the button
+        overflow: 'hidden', // Prevents text overflow
+        whiteSpace: 'nowrap', // Prevents the text from wrapping onto a new line
+        textOverflow: 'ellipsis', // Adds "..." if the text is too long
     },
 };
 
